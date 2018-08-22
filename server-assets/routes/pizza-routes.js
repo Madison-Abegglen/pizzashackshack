@@ -3,19 +3,24 @@ let Pizza = require('../models/Pizza') //in node you dont have to append .js sin
 
 //THIS IS YOUR GET
 //get all or by ID Industry standard following REST conventions
-router.get('/:id?', (req, res, next) => {
-    if (!req.params.id) {
-        //FIND ALL of this model 
-        Pizza.find({})
-            .then(pizzas => {    // pizzas on this line can also just be data/an array, hypothetically speaking could be drinks, cars, etc.
-                return res.send(pizzas)
-            })
-    }
-    Pizza.findById(req.params.id)
-        .then(pizza => {
-            res.send(pizza)
+router.get('/', (req, res, next) => {
+    //FIND ALL of this model 
+    Pizza.find({})
+        .then(pizzas => {
+            res.send(pizzas)
+        })
+        .catch(err => {
+            return next(err)
         })
 })
+
+router.get('/:id', (req, res, next) => {
+    //FIND by one specific ID/get one 
+    Pizza.findById(req.params.id)
+        .then(pizza => res.send(pizza))
+        .catch(next) // you should be safe doing this rather than the catch up in the get ALL  b
+})
+
 
 //THIS IS YOUR POST
 router.post('/', (req, res, next) => {
@@ -49,19 +54,18 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
     Pizza.findByIdAndUpdate(req.params.id, req.body, { new: true })
         //whatever you send with body, update with this. doesnt replace, it edits; if you dont provide new: true, you will get the old data
-        .then(newPizza => {
-            res.send(newPizza)
-        })
+        .then(() => res.send({
+            message: 'Success'
+        }))
 })
 
 //this is your DELETE
 router.delete('/:id', (req, res, next) => {
     Pizza.findByIdAndRemove(req.params.id)  // soft delete, meaning it backs up into some archive, hard delete will truly delete all the info
-        .then(oldDeletedPizza => {
-            res.send('DELORTED')
-        })
+        .then(() => res.send({
+            message: 'Successfully removed pizza'
+        }))
+        .catch(next)
 })
-
-
 
 module.exports = router 
