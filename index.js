@@ -19,7 +19,7 @@ server.use(bodyParser.urlencoded({
 let pizzaRoutes = require('./server-assets/routes/pizza-routes')
 
 // the '/pizza' puts all pizzaRoutes behind /pizza 
-server.use('api/pizza', pizzaRoutes)
+server.use('/api/pizza', pizzaRoutes)
 
 
 //starts server 
